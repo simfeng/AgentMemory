@@ -50,12 +50,7 @@ Prefer stable areas such as:
 
 ### Matter Name
 
-Each matter has:
-
-- a human-readable title in `meta.md`
-- a folder slug in the directory path
-
-The matter slug should:
+The matter name should:
 
 - include descriptive key information
 - make the matter's intent clear at a glance
@@ -68,14 +63,8 @@ If there is a tradeoff, prefer:
 - stronger intent
 - better readability
 
-over making the slug shorter.
+over making the name shorter.
 
-When the user later gives a more accurate or more complete name:
-
-- treat that as the current canonical name
-- move the matter directory if category or slug should change
-- update the title in `meta.md`
-- keep the previous name in aliases
 
 ## Command Usage
 
