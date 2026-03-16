@@ -66,12 +66,12 @@
 
 ### 3. `matter-manager`
 
-作用：把事项识别、事项修正、`meta.md` 更新、`facts.md` 追加放在一个 skill 里完成。
+作用：把事项识别、事项修正、`meta.md` 更新、`history.md` 追加放在一个 skill 里完成。
 
 写入文件：
 
 - `~/.lifementor/matters/<category>/<matter-slug>/meta.md`
-- `~/.lifementor/matters/<category>/<matter-slug>/facts.md`
+- `~/.lifementor/matters/<category>/<matter-slug>/history.md`
 
 负责处理：
 
@@ -80,26 +80,26 @@
 - 判断事项分类和名称是否需要修正
 - 当归属不明确时先向用户反问一句
 - 更新 `meta.md`
-- 追加新的事实进展到 `facts.md`
+- 追加新的事实进展到 `history.md`
 
 规则：
 
 - 只允许通过 `skills/matter-manager/scripts/` 下的脚本操作事项文件
-- 先看事项目录名，再看 `meta.md`，最后在需要时看 `facts.md`
-- `facts.md` 默认只读取最后 100 行
+- 先看事项目录名，再看 `meta.md`，最后在需要时看 `history.md`
+- `history.md` 默认只读取最后 100 行
 - 需要时可以按文件行号范围读取，例如 `1-100`、`101-200`、`201-300`
 - 行号从 `1` 开始，且包含起止行
-- `facts.md` 只允许追加，不重写
+- `history.md` 只允许追加，不重写
 - 所有脚本只使用 Python 标准库
 
 脚本：
 
 - `scan-matters.py`：扫描已有分类和事项目录
 - `read-matter-meta.py`：读取候选事项的 `meta.md`
-- `read-matter-facts.py`：按尾部或按行范围读取 `facts.md`
-- `upsert-matter-meta.py`：创建或更新 `meta.md`，并确保 `facts.md` 存在
+- `read-matter-history.py`：按尾部或按行范围读取 `history.md`
+- `upsert-matter-meta.py`：创建或更新 `meta.md`，并确保 `history.md` 存在
 - `move-matter.py`：移动事项目录，完成改分类或改名称
-- `append-matter-fact.py`：只向 `facts.md` 追加事实行
+- `append-matter-history.py`：只向 `history.md` 追加事实行
 
 ## 二、目录和文件设计
 
@@ -113,7 +113,7 @@ lifementor/
     <category>/
       <matter-slug>/
         meta.md
-        facts.md
+        history.md
 ```
 
 ### `lifementor/who-you-are.md`
@@ -143,7 +143,7 @@ lifementor/
 - 当前状态
 - 可用于匹配的关键词或别名
 
-### `~/.lifementor/matters/<category>/<matter-slug>/facts.md`
+### `~/.lifementor/matters/<category>/<matter-slug>/history.md`
 
 至少放：
 

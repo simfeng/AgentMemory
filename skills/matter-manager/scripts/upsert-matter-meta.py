@@ -13,6 +13,7 @@ import argparse
 import json
 from pathlib import Path
 
+HISTORY_FILENAME = "history.md"
 
 SECTION_KEYS = {
     "Summary": "summary",
@@ -54,8 +55,6 @@ def parse_args() -> argparse.Namespace:
         default="created",
         help="Text used in the first progress line when history is initialized.",
     )
-    parser.add_argument("--facts-created-at", dest="history_started_at", help=argparse.SUPPRESS)
-    parser.add_argument("--facts-created-text", dest="history_started_text", help=argparse.SUPPRESS)
     return parser.parse_args()
 
 
@@ -138,15 +137,15 @@ def build_meta_text(
     return "\n".join(lines)
 
 
-def ensure_history_file(facts_path: Path, created_at: str | None, created_text: str) -> bool:
-    if facts_path.exists():
+def ensure_history_file(history_path: Path, created_at: str | None, created_text: str) -> bool:
+    if history_path.exists():
         return False
 
-    lines = ["# Facts", "", "## Fact History"]
+    lines = ["# History", "", "## Progress History"]
     if created_at:
         lines.append(f"- {created_at}: {created_text}")
     lines.append("")
-    facts_path.write_text("\n".join(lines), encoding="utf-8")
+    history_path.write_text("\n".join(lines), encoding="utf-8")
     return True
 
 
@@ -154,7 +153,7 @@ def main() -> int:
     args = parse_args()
     matter_dir = Path(args.matter_dir).expanduser()
     meta_path = matter_dir / "meta.md"
-    facts_path = matter_dir / "facts.md"
+    history_path = matter_dir / HISTORY_FILENAME
     matter_dir.mkdir(parents=True, exist_ok=True)
 
     existing = parse_existing_meta(meta_path)
@@ -175,7 +174,7 @@ def main() -> int:
 
     meta_text = build_meta_text(title, summary, why_it_matters, current_status, aliases)
     meta_path.write_text(meta_text, encoding="utf-8")
-    created_history = ensure_history_file(facts_path, args.history_started_at, args.history_started_text)
+    created_history = ensure_history_file(history_path, args.history_started_at, args.history_started_text)
 
     payload = {
         "matter_dir": str(matter_dir),

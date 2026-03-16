@@ -3,9 +3,9 @@
 Read recent progress lines for a matter.
 
 Examples:
-  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast
-  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100
-  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200
+  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast
+  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100
+  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ import sys
 from collections import deque
 from pathlib import Path
 
-HISTORY_FILENAME = "facts.md"
+HISTORY_FILENAME = "history.md"
 
 
 def parse_args() -> argparse.Namespace:
@@ -23,9 +23,9 @@ def parse_args() -> argparse.Namespace:
         description="Read only a line window from a matter's recent progress history. Defaults to the last 100 lines.",
         epilog=(
             "Examples:\n"
-            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast\n"
-            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100\n"
-            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200"
+            "  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast\n"
+            "  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100\n"
+            "  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
@@ -59,9 +59,16 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
-def resolve_history_path(raw_path: str) -> Path:
+def resolve_matter_dir(raw_path: str) -> Path:
     path = Path(raw_path).expanduser()
-    return path if path.name == HISTORY_FILENAME else path / HISTORY_FILENAME
+    if path.name == HISTORY_FILENAME:
+        return path.parent
+    return path
+
+
+def resolve_history_path(raw_path: str) -> Path:
+    matter_dir = resolve_matter_dir(raw_path)
+    return matter_dir / HISTORY_FILENAME
 
 
 def write_tail(path: Path, tail_size: int) -> None:
@@ -85,15 +92,15 @@ def write_range(path: Path, start: int, end: int) -> None:
 
 def main() -> int:
     args = parse_args()
-    facts_path = resolve_history_path(args.matter_dir)
+    history_path = resolve_history_path(args.matter_dir)
 
-    if not facts_path.exists():
+    if not history_path.exists():
         return 0
 
     if args.start is not None and args.end is not None:
-        write_range(facts_path, args.start, args.end)
+        write_range(history_path, args.start, args.end)
     else:
-        write_tail(facts_path, args.tail)
+        write_tail(history_path, args.tail)
 
     return 0
 

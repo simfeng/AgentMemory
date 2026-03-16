@@ -3,8 +3,8 @@
 Append new progress lines for a matter without reading the current history.
 
 Examples:
-  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:30: user confirmed the forecast scope"
-  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:35: user uploaded a new data file"
+  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:30: user confirmed the forecast scope"
+  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:35: user uploaded a new data file"
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ import json
 import sys
 from pathlib import Path
 
-HISTORY_FILENAME = "facts.md"
+HISTORY_FILENAME = "history.md"
 
 
 def parse_args() -> argparse.Namespace:
@@ -22,8 +22,8 @@ def parse_args() -> argparse.Namespace:
         description="Append new progress lines to a matter. This script never reads the current history.",
         epilog=(
             "Examples:\n"
-            "  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:30: user confirmed scope\"\n"
-            "  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:35: user sent new data\""
+            "  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:30: user confirmed scope\"\n"
+            "  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:35: user sent new data\""
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
         "--line",
         action="append",
         default=[],
-        help="A fact line to append. Can be used more than once.",
+        help="A progress line to append. Can be used more than once.",
     )
     args = parser.parse_args()
     if not args.line and sys.stdin.isatty():
@@ -42,7 +42,9 @@ def parse_args() -> argparse.Namespace:
 
 def resolve_matter_dir(raw_path: str) -> Path:
     path = Path(raw_path).expanduser()
-    return path.parent if path.name == HISTORY_FILENAME else path
+    if path.name == HISTORY_FILENAME:
+        return path.parent
+    return path
 
 
 def resolve_history_path(raw_path: str) -> Path:
@@ -65,7 +67,7 @@ def normalize_lines(lines: list[str]) -> list[str]:
 def main() -> int:
     args = parse_args()
     matter_dir = resolve_matter_dir(args.matter_dir)
-    facts_path = resolve_history_path(args.matter_dir)
+    history_path = resolve_history_path(args.matter_dir)
 
     input_lines = list(args.line)
     if not sys.stdin.isatty():
@@ -74,10 +76,10 @@ def main() -> int:
     lines_to_append = normalize_lines(input_lines)
     if not lines_to_append:
         return 0
-    if not facts_path.exists():
+    if not history_path.exists():
         raise SystemExit("Matter history must already exist before append.")
 
-    with facts_path.open("a", encoding="utf-8") as handle:
+    with history_path.open("a", encoding="utf-8") as handle:
         handle.writelines(lines_to_append)
 
     payload = {"matter_dir": str(matter_dir), "appended_lines": len(lines_to_append)}

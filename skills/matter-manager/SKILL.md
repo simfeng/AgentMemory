@@ -19,10 +19,10 @@ Script paths here are relative to this skill folder.
 
 - `scripts/scan-matters.py`
 - `scripts/read-matter-meta.py`
-- `scripts/read-matter-facts.py`
+- `scripts/read-matter-history.py`
 - `scripts/upsert-matter-meta.py`
 - `scripts/move-matter.py`
-- `scripts/append-matter-fact.py`
+- `scripts/append-matter-history.py`
 
 All six scripts use only Python standard library modules.
 
@@ -107,13 +107,13 @@ Output: JSON with title, summary, why-it-matters, current status, and aliases.
 Default recent window:
 
 ```bash
-scripts/read-matter-facts.py ~/.lifementor/matters/<category>/<matter-slug>
+scripts/read-matter-history.py ~/.lifementor/matters/<category>/<matter-slug>
 ```
 
 Specific line range:
 
 ```bash
-scripts/read-matter-facts.py ~/.lifementor/matters/<category>/<matter-slug> --start 1 --end 100
+scripts/read-matter-history.py ~/.lifementor/matters/<category>/<matter-slug> --start 1 --end 100
 ```
 
 Rules:
@@ -174,13 +174,13 @@ Use this only after the matter path is final.
 Append one fact:
 
 ```bash
-scripts/append-matter-fact.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..."
+scripts/append-matter-history.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..."
 ```
 
 Append multiple facts:
 
 ```bash
-scripts/append-matter-fact.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..." --line "- YYYY-MM-DD HH:MM: ..."
+scripts/append-matter-history.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..." --line "- YYYY-MM-DD HH:MM: ..."
 ```
 
 Rules:
@@ -195,13 +195,13 @@ Output: JSON with matter path and appended line count.
 
 1. Run `scripts/scan-matters.py` first to read existing categories and matter folder names.
 2. Run `scripts/read-matter-meta.py` only for likely candidates.
-3. Run `scripts/read-matter-facts.py` only when recent detail is needed to disambiguate a likely match.
+3. Run `scripts/read-matter-history.py` only when recent detail is needed to disambiguate a likely match.
 4. If the matter is still ambiguous, ask the user one short clarifying question and stop.
 5. If an existing matter clearly matches, continue with that matter.
 6. If the current category or slug is no longer accurate, use `scripts/move-matter.py`, then run `scripts/upsert-matter-meta.py`.
 7. If no existing matter fits but the message should become a tracked matter, create it with `scripts/upsert-matter-meta.py`.
 8. If the matter's meta needs correction, use `scripts/upsert-matter-meta.py`.
-9. If this round contains useful new progress, append progress lines with `scripts/append-matter-fact.py`.
+9. If this round contains useful new progress, append progress lines with `scripts/append-matter-history.py`.
 
 ## Clarifying Question
 
