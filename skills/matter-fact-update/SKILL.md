@@ -9,8 +9,8 @@ Use this skill only after the conversation is already tied to a specific matter.
 
 ## Read and write
 
-- Read `lifementor/matters/<matter-slug>/meta.md`.
-- Read `lifementor/matters/<matter-slug>/facts.md`.
+- Read `lifementor/matters/<category>/<matter-slug>/meta.md`.
+- Read `lifementor/matters/<category>/<matter-slug>/facts.md`.
 - Write back to those same files when needed.
 
 ## Focus

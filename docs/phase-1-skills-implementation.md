@@ -77,15 +77,20 @@
 
 作用：判断这轮对话是否命中某个已有事项，或者是否需要新建事项。
 
+这个 skill 在实际流程里更接近“路由入口”。
+
+只要用户这轮消息里包含实际内容，而不是纯问候或纯寒暄，就应该先经过它，判断这段内容是不是属于某个事项。
+
 负责判断：
 
 - 这是不是一件值得持续跟踪的事
 - 它是不是已经有对应的事项
 - 如果没有，是否要新建
+- 这个事项应该放到哪个分类下面
 
 写入位置：
 
-- 新事项创建到 `lifementor/matters/<matter-slug>/`
+- 新事项创建到 `lifementor/matters/<category>/<matter-slug>/`
 
 输出结果：
 
@@ -97,6 +102,9 @@
 
 - 优先匹配已有事项
 - 在有持续跟踪价值时创建新事项
+- 在大多数有效消息里优先运行它做事项归类
+- 事项名要尽量带上完整信息，但保持合理长度
+- 先看事项目录名，再看 `meta.md`，最后在需要时看 `facts.md`
 
 ### 4. `matter-fact-update`
 
@@ -112,7 +120,7 @@
 
 写入文件：
 
-- 对应的 `lifementor/matters/<matter-slug>/facts.md`
+- 对应的 `lifementor/matters/<category>/<matter-slug>/facts.md`
 
 输出结果：
 
@@ -148,12 +156,14 @@ lifementor/
   who-you-are.md
   who-you-want-to-be.md
   matters/
-    <matter-1>/
-      meta.md
-      facts.md
-    <matter-2>/
-      meta.md
-      facts.md
+    <category-a>/
+      <matter-1>/
+        meta.md
+        facts.md
+    <category-b>/
+      <matter-2>/
+        meta.md
+        facts.md
 ```
 
 这就是第一阶段的完整结构。
@@ -176,10 +186,20 @@ lifementor/
 `lifementor/matters/`
 
 - 这里存放所有事项
+- 先按分类组织
 - 一件事一个目录，边界清晰
 - 每个事项都拆成 `meta.md` 和 `facts.md` 两层
-- 主对话里可以先读 `meta.md` 做匹配，命中后再读 `facts.md`
+- 主对话里先看目录名，再读 `meta.md`，最后在需要时读 `facts.md`
 - `matter-detection` 和 `matter-fact-update` 都使用这里的内容
+
+分类由 `matter-detection` 按需复用或创建。
+
+分类原则是：
+
+- 能帮助后续管理
+- 名字清楚
+- 粒度适中
+- 适合长期使用
 
 ## 三、每个文件最少要放什么
 
@@ -204,7 +224,7 @@ lifementor/
 
 这个文件存稳定的人生方向。
 
-### `lifementor/matters/<matter-slug>/meta.md`
+### `lifementor/matters/<category>/<matter-slug>/meta.md`
 
 至少放：
 
@@ -218,7 +238,7 @@ lifementor/
 
 Agent 在判断当前对话属于哪个事项时，优先读这个文件。
 
-### `lifementor/matters/<matter-slug>/facts.md`
+### `lifementor/matters/<category>/<matter-slug>/facts.md`
 
 至少放：
 
@@ -245,9 +265,10 @@ lifementor/
   who-you-are.md
   who-you-want-to-be.md
   matters/
-    <matter-slug>/
-      meta.md
-      facts.md
+    <category>/
+      <matter-slug>/
+        meta.md
+        facts.md
 ```
 
 先把这套最小结构跑通，再讨论后面的提醒、review、归档。
