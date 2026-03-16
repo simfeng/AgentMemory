@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create or update meta.md for a matter and create facts.md if missing.
+Create or update matter meta and initialize progress history if missing.
 
 Examples:
   upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title "HRC Price Forecast" --summary "Track the forecast scope." --why "Important for decision making." --status "active"
@@ -24,7 +24,7 @@ SECTION_KEYS = {
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Create or update matter meta.md and ensure facts.md exists.",
+        description="Create or update matter meta and ensure matter history exists.",
         epilog=(
             "Examples:\n"
             "  upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title \"HRC Price Forecast\" --summary \"Track the forecast scope.\" --why \"Important for decision making.\" --status \"active\"\n"
@@ -44,14 +44,18 @@ def parse_args() -> argparse.Namespace:
         help="Alias to keep for matching. Can be used more than once.",
     )
     parser.add_argument(
-        "--facts-created-at",
-        help="Minute-level timestamp used when creating a missing facts.md.",
+        "--history-started-at",
+        dest="history_started_at",
+        help="Minute-level timestamp used when initializing missing matter history.",
     )
     parser.add_argument(
-        "--facts-created-text",
+        "--history-started-text",
+        dest="history_started_text",
         default="created",
-        help="Text used in the first facts entry when facts.md is created.",
+        help="Text used in the first progress line when history is initialized.",
     )
+    parser.add_argument("--facts-created-at", dest="history_started_at", help=argparse.SUPPRESS)
+    parser.add_argument("--facts-created-text", dest="history_started_text", help=argparse.SUPPRESS)
     return parser.parse_args()
 
 
@@ -134,7 +138,7 @@ def build_meta_text(
     return "\n".join(lines)
 
 
-def ensure_facts_file(facts_path: Path, created_at: str | None, created_text: str) -> bool:
+def ensure_history_file(facts_path: Path, created_at: str | None, created_text: str) -> bool:
     if facts_path.exists():
         return False
 
@@ -171,13 +175,11 @@ def main() -> int:
 
     meta_text = build_meta_text(title, summary, why_it_matters, current_status, aliases)
     meta_path.write_text(meta_text, encoding="utf-8")
-    created_facts = ensure_facts_file(facts_path, args.facts_created_at, args.facts_created_text)
+    created_history = ensure_history_file(facts_path, args.history_started_at, args.history_started_text)
 
     payload = {
         "matter_dir": str(matter_dir),
-        "meta_path": str(meta_path),
-        "facts_path": str(facts_path),
-        "created_facts": created_facts,
+        "history_initialized": created_history,
         "title": title,
         "aliases": aliases,
     }

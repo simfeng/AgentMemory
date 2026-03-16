@@ -102,18 +102,18 @@ scripts/read-matter-meta.py ~/.lifementor/matters/<category-a>/<matter-slug-a> ~
 
 Output: JSON with title, summary, why-it-matters, current status, and aliases.
 
-### 3. Read matter facts
+### 3. Read recent progress
 
 Default recent window:
 
 ```bash
-scripts/read-matter-facts.py ~/.lifementor/matters/<category>/<matter-slug>/facts.md
+scripts/read-matter-facts.py ~/.lifementor/matters/<category>/<matter-slug>
 ```
 
 Specific line range:
 
 ```bash
-scripts/read-matter-facts.py ~/.lifementor/matters/<category>/<matter-slug>/facts.md --start 1 --end 100
+scripts/read-matter-facts.py ~/.lifementor/matters/<category>/<matter-slug> --start 1 --end 100
 ```
 
 Rules:
@@ -122,7 +122,7 @@ Rules:
 - line numbers are 1-based
 - start and end are both included
 
-Output: plain text lines from `facts.md`.
+Output: plain text lines from recent matter progress.
 
 ### 4. Create or update matter meta
 
@@ -138,17 +138,28 @@ Add aliases when needed:
 scripts/upsert-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug> --title "<title>" --alias "<alias-a>" --alias "<alias-b>"
 ```
 
-If `facts.md` does not exist yet, create it with the first timestamped fact:
+If this is a new matter and its progress history still needs initialization:
 
 ```bash
-scripts/upsert-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug> --title "<title>" --facts-created-at "YYYY-MM-DD HH:MM"
+scripts/upsert-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug> --title "<title>" --history-started-at "YYYY-MM-DD HH:MM"
 ```
 
-Output: JSON with matter path, meta path, facts path, title, aliases, and whether `facts.md` was created.
+Output: JSON with matter path, title, aliases, and whether progress history was initialized.
 
 ### 5. Move matter
 
-Use this when category or slug should change.
+Use this whenever the matter category or matter name should change.
+
+This includes:
+
+- the user explicitly corrects the matter name
+- the user explicitly corrects the category
+- you determine that the current matter name is no longer accurate enough
+- you determine that the current category is no longer the best fit
+
+When any of these happen, call this script.
+
+Do not use any other agent tool to rename or move the matter.
 
 ```bash
 scripts/move-matter.py ~/.lifementor/matters/<old-category>/<old-matter-slug> ~/.lifementor/matters/<new-category>/<new-matter-slug>
@@ -156,29 +167,29 @@ scripts/move-matter.py ~/.lifementor/matters/<old-category>/<old-matter-slug> ~/
 
 Output: JSON with old path, new path, and whether a move happened.
 
-### 6. Append fact lines
+### 6. Append progress lines
 
 Use this only after the matter path is final.
 
 Append one fact:
 
 ```bash
-scripts/append-matter-fact.py ~/.lifementor/matters/<category>/<matter-slug>/facts.md --line "- YYYY-MM-DD HH:MM: ..."
+scripts/append-matter-fact.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..."
 ```
 
 Append multiple facts:
 
 ```bash
-scripts/append-matter-fact.py ~/.lifementor/matters/<category>/<matter-slug>/facts.md --line "- YYYY-MM-DD HH:MM: ..." --line "- YYYY-MM-DD HH:MM: ..."
+scripts/append-matter-fact.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..." --line "- YYYY-MM-DD HH:MM: ..."
 ```
 
 Rules:
 
 - every appended line must start with `- `
-- `facts.md` must already exist
+- matter history must already exist
 - append only, never rewrite
 
-Output: JSON with `facts_path` and appended line count.
+Output: JSON with matter path and appended line count.
 
 ## Workflow
 
@@ -190,7 +201,7 @@ Output: JSON with `facts_path` and appended line count.
 6. If the current category or slug is no longer accurate, use `scripts/move-matter.py`, then run `scripts/upsert-matter-meta.py`.
 7. If no existing matter fits but the message should become a tracked matter, create it with `scripts/upsert-matter-meta.py`.
 8. If the matter's meta needs correction, use `scripts/upsert-matter-meta.py`.
-9. If this round contains useful new progress, append fact lines with `scripts/append-matter-fact.py`.
+9. If this round contains useful new progress, append progress lines with `scripts/append-matter-fact.py`.
 
 ## Clarifying Question
 

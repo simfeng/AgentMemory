@@ -91,7 +91,6 @@ def main() -> int:
         items.append(
             {
                 "matter_dir": str(matter_dir),
-                "meta_path": str(meta_path),
                 **parsed,
             }
         )

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Append new fact lines to facts.md without reading the file.
+Append new progress lines for a matter without reading the current history.
 
 Examples:
-  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --line "- 2026-03-16 10:30: user confirmed the forecast scope"
-  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --line "- 2026-03-16 10:35: user uploaded a new data file"
+  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:30: user confirmed the forecast scope"
+  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:35: user uploaded a new data file"
 """
 
 from __future__ import annotations
@@ -14,18 +14,20 @@ import json
 import sys
 from pathlib import Path
 
+HISTORY_FILENAME = "facts.md"
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Append new fact lines to facts.md. This script never reads the file.",
+        description="Append new progress lines to a matter. This script never reads the current history.",
         epilog=(
             "Examples:\n"
-            "  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --line \"- 2026-03-16 10:30: user confirmed scope\"\n"
-            "  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --line \"- 2026-03-16 10:35: user sent new data\""
+            "  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:30: user confirmed scope\"\n"
+            "  append-matter-fact.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:35: user sent new data\""
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    parser.add_argument("facts_file", help="Path to facts.md")
+    parser.add_argument("matter_dir", help="Path to the matter directory.")
     parser.add_argument(
         "--line",
         action="append",
@@ -38,9 +40,14 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
-def validate_facts_file(path: Path) -> None:
-    if path.name != "facts.md":
-        raise SystemExit("Only facts.md can be updated with this script.")
+def resolve_matter_dir(raw_path: str) -> Path:
+    path = Path(raw_path).expanduser()
+    return path.parent if path.name == HISTORY_FILENAME else path
+
+
+def resolve_history_path(raw_path: str) -> Path:
+    matter_dir = resolve_matter_dir(raw_path)
+    return matter_dir / HISTORY_FILENAME
 
 
 def normalize_lines(lines: list[str]) -> list[str]:
@@ -57,8 +64,8 @@ def normalize_lines(lines: list[str]) -> list[str]:
 
 def main() -> int:
     args = parse_args()
-    facts_path = Path(args.facts_file).expanduser()
-    validate_facts_file(facts_path)
+    matter_dir = resolve_matter_dir(args.matter_dir)
+    facts_path = resolve_history_path(args.matter_dir)
 
     input_lines = list(args.line)
     if not sys.stdin.isatty():
@@ -68,12 +75,12 @@ def main() -> int:
     if not lines_to_append:
         return 0
     if not facts_path.exists():
-        raise SystemExit("facts.md must already exist before append.")
+        raise SystemExit("Matter history must already exist before append.")
 
     with facts_path.open("a", encoding="utf-8") as handle:
         handle.writelines(lines_to_append)
 
-    payload = {"facts_path": str(facts_path), "appended_lines": len(lines_to_append)}
+    payload = {"matter_dir": str(matter_dir), "appended_lines": len(lines_to_append)}
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Read only part of a matter facts file.
+Read recent progress lines for a matter.
 
 Examples:
-  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md
-  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --start 1 --end 100
-  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --start 101 --end 200
+  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast
+  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100
+  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200
 """
 
 from __future__ import annotations
@@ -15,19 +15,21 @@ import sys
 from collections import deque
 from pathlib import Path
 
+HISTORY_FILENAME = "facts.md"
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Read only a line window from facts.md. Defaults to the last 100 lines.",
+        description="Read only a line window from a matter's recent progress history. Defaults to the last 100 lines.",
         epilog=(
             "Examples:\n"
-            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md\n"
-            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --start 1 --end 100\n"
-            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast/facts.md --start 101 --end 200"
+            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast\n"
+            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100\n"
+            "  read-matter-facts.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    parser.add_argument("facts_file", help="Path to facts.md")
+    parser.add_argument("matter_dir", help="Path to the matter directory.")
     parser.add_argument(
         "--tail",
         type=int,
@@ -57,9 +59,9 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
-def validate_facts_file(path: Path) -> None:
-    if path.name != "facts.md":
-        raise SystemExit("Only facts.md can be read with this script.")
+def resolve_history_path(raw_path: str) -> Path:
+    path = Path(raw_path).expanduser()
+    return path if path.name == HISTORY_FILENAME else path / HISTORY_FILENAME
 
 
 def write_tail(path: Path, tail_size: int) -> None:
@@ -83,8 +85,7 @@ def write_range(path: Path, start: int, end: int) -> None:
 
 def main() -> int:
     args = parse_args()
-    facts_path = Path(args.facts_file).expanduser()
-    validate_facts_file(facts_path)
+    facts_path = resolve_history_path(args.matter_dir)
 
     if not facts_path.exists():
         return 0
