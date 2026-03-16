@@ -2,28 +2,31 @@
 
 这份文档只写两件事：
 
-1. 第一阶段四个 skill 具体做什么
+1. 第一阶段三个 skill 具体做什么
 2. 第一阶段目录和文件怎么设计
 
 ## 一、第一阶段 Skills
 
-第一阶段只做四个 skill，全部放在主对话里执行。
+第一阶段只做三个 skill，全部放在主对话里执行。
 
 每轮主对话内部顺序：
 
 1. `what-you-are`
 2. `who-you-want-to-be`
-3. `matter-detection`
-4. `matter-fact-update`
+3. `matter-manager`
 
-这一阶段的原则很简单：
+这一阶段的原则：
 
 - 记录长期有价值且判断清楚的信息
-- `matter-detection` 和 `matter-fact-update` 只使用 `lifementor/matters/`
+- `matter-manager` 只使用 `~/.lifementor/matters/`
 
 ### 1. `what-you-are`
 
 作用：理解用户是谁。
+
+写入文件：
+
+- `lifementor/who-you-are.md`
 
 负责更新：
 
@@ -33,23 +36,19 @@
 - 稳定行为方式
 - 长期压力和限制条件
 
-写入文件：
-
-- `lifementor/who-you-are.md`
-
 输出结果：
 
 - `no_update`
 - `profile_update`
 - `profile_correction`
 
-规则：
-
-- 记录稳定的用户事实
-
 ### 2. `who-you-want-to-be`
 
 作用：理解用户想成为什么样的人，向往怎样的生活，以及想用什么方式处理事情。
+
+写入文件：
+
+- `lifementor/who-you-want-to-be.md`
 
 负责更新：
 
@@ -58,10 +57,6 @@
 - 想用什么方式做事和做决定
 - 长期的人生方向变化
 
-写入文件：
-
-- `lifementor/who-you-want-to-be.md`
-
 输出结果：
 
 - `no_update`
@@ -69,29 +64,23 @@
 - `direction_priority_change`
 - `direction_correction`
 
-规则：
+### 3. `matter-manager`
 
-- 记录稳定的人生方向事实
+作用：把事项识别、事项修正、`meta.md` 更新、`facts.md` 追加放在一个 skill 里完成。
 
-### 3. `matter-detection`
+写入文件：
 
-作用：判断这轮对话是否命中某个已有事项，或者是否需要新建事项。
+- `~/.lifementor/matters/<category>/<matter-slug>/meta.md`
+- `~/.lifementor/matters/<category>/<matter-slug>/facts.md`
 
-这个 skill 在实际流程里更接近“路由入口”。
+负责处理：
 
-只要用户这轮消息里包含实际内容，而不是纯问候或纯寒暄，就应该先经过它，判断这段内容是不是属于某个事项。
-
-负责判断：
-
-- 这是不是一件值得持续跟踪的事
-- 它是不是已经有对应的事项
-- 如果没有，是否要新建
-- 这个事项应该放到哪个分类下面
-- 这个事项的当前名字是否需要改得更准确
-
-写入位置：
-
-- 新事项创建到 `lifementor/matters/<category>/<matter-slug>/`
+- 判断这轮对话是否属于某个已有事项
+- 判断是否需要新建事项
+- 判断事项分类和名称是否需要修正
+- 当归属不明确时先向用户反问一句
+- 更新 `meta.md`
+- 追加新的事实进展到 `facts.md`
 
 输出结果：
 
@@ -103,177 +92,26 @@
 
 规则：
 
-- 优先匹配已有事项
-- 在有持续跟踪价值时创建新事项
-- 在大多数有效消息里优先运行它做事项归类
-- 事项名要带描述性关键信息，优先保证可读性和意图清晰
+- 只允许通过 `skills/matter-manager/scripts/` 下的脚本操作事项文件
 - 先看事项目录名，再看 `meta.md`，最后在需要时看 `facts.md`
-- 当归属不明确时，先反问用户一句，确认当前事件到底属于哪个事项
-- 当用户给出更准确的事项名称时，用当前 shell 的重命名命令更新事项目录名，并同步更新 `meta.md` 中的主名称
+- `facts.md` 默认只读取最后 100 行
+- 需要时可以按文件行号范围读取，例如 `1-100`、`101-200`、`201-300`
+- 行号从 `1` 开始，且包含起止行
+- `facts.md` 只允许追加，不重写
+- 所有脚本只使用 Python 标准库
 
-命令选择：
+脚本：
 
-- `zsh` / `bash`：`mv`
-- PowerShell：`mv` 或 `Move-Item`
-- `cmd.exe`：`move`
-
-### 4. `matter-fact-update`
-
-作用：在事项已经确定后，提取这轮对话带来的最新事实。
-
-负责更新：
-
-- 新动作
-- 新决定
-- 新阻碍
-- 新风险
-- 有意义的进展变化
-
-写入文件：
-
-- 对应的 `lifementor/matters/<category>/<matter-slug>/facts.md`
-
-输出结果：
-
-- `no_fact_update`
-- `fact_entry`
-
-规则：
-
-- 只记录这轮对话里提炼出的有用事实进展
-- 不在这里更新事项名称和分类
-- 不在这里更新 `meta.md`
-- 读取时只看 `facts.md` 文件尾部，默认读取最后 100 行
-- 当默认窗口不够时，可以继续向前读取更多历史内容
-- 不读取整个 `facts.md`
-- 写入时用 `cat >>` 直接向 `facts.md` 追加
-- 不用 edit 工具更新 `facts.md`
-- 事实记录时间精确到分钟
+- `scan-matters.py`：扫描已有分类和事项目录
+- `read-matter-meta.py`：读取候选事项的 `meta.md`
+- `read-matter-facts.py`：按尾部或按行范围读取 `facts.md`
+- `upsert-matter-meta.py`：创建或更新 `meta.md`，并确保 `facts.md` 存在
+- `move-matter.py`：移动事项目录，完成改分类或改名称
+- `append-matter-fact.py`：只向 `facts.md` 追加事实行
 
 ## 二、目录和文件设计
 
 第一阶段只保留最必要的目录。
-
-根目录名直接用：
-
-```text
-lifementor/
-```
-
-- `lifementor` 就是这套 Agent 记忆本身
-- 名字直接、有语义
-- 适合作为后续所有长期记录的统一入口
-
-### 推荐结构
-
-```text
-lifementor/
-  who-you-are.md
-  who-you-want-to-be.md
-  matters/
-    <category-a>/
-      <matter-1>/
-        meta.md
-        facts.md
-    <category-b>/
-      <matter-2>/
-        meta.md
-        facts.md
-```
-
-这就是第一阶段的完整结构。
-
-### 保留这些文件和目录的原因
-
-`lifementor/who-you-are.md`
-
-- 集中存放稳定的用户认知
-- 让 `what-you-are` 只有一个明确写入目标
-- 后续读取用户画像时路径固定、成本低
-- 按需创建和更新
-
-`lifementor/who-you-want-to-be.md`
-
-- 集中存放人生方向
-- 让 `who-you-want-to-be` 只维护一份人生方向主文件
-- 按需创建和更新
-
-`lifementor/matters/`
-
-- 这里存放所有事项
-- 先按分类组织
-- 一件事一个目录，边界清晰
-- 每个事项都拆成 `meta.md` 和 `facts.md` 两层
-- 主对话里先看目录名，再读 `meta.md`，最后在需要时读 `facts.md`
-- `matter-detection` 和 `matter-fact-update` 都使用这里的内容
-- 当事项名称或分类变得更准确时，可以直接更新目录路径
-
-分类由 `matter-detection` 按需复用或创建。
-
-分类原则是：
-
-- 能帮助后续管理
-- 名字清楚
-- 粒度适中
-- 适合长期使用
-
-## 三、每个文件最少要放什么
-
-### `lifementor/who-you-are.md`
-
-至少放：
-
-- 用户是谁
-- 用户目前处在什么阶段
-- 用户稳定的偏好
-- 用户稳定的限制条件
-
-这个文件存稳定的自我认知。
-
-### `lifementor/who-you-want-to-be.md`
-
-至少放：
-
-- 用户想成为什么样的人
-- 用户向往怎样的生活
-- 用户想用什么方式处理事情和做决定
-
-这个文件存稳定的人生方向。
-
-### `lifementor/matters/<category>/<matter-slug>/meta.md`
-
-至少放：
-
-- 事项名称
-- 一句话说明这件事是什么
-- 这件事为什么重要
-- 当前状态
-- 可用于匹配的关键词或别名
-
-这个文件是事项的轻量识别层。
-
-Agent 在判断当前对话属于哪个事项时，优先读这个文件。
-
-### `lifementor/matters/<category>/<matter-slug>/facts.md`
-
-至少放：
-
-- 历史事实记录
-
-这个文件是事项的详细事实层。
-
-Agent 在已经命中某个事项后，只读取文件尾部并追加最新事实。
-
-## 四、当前结论
-
-第一阶段就做这四个 skill：
-
-- `what-you-are`
-- `who-you-want-to-be`
-- `matter-detection`
-- `matter-fact-update`
-
-第一阶段就用这套目录：
 
 ```text
 lifementor/
@@ -286,4 +124,40 @@ lifementor/
         facts.md
 ```
 
-先把这套最小结构跑通，再讨论后面的提醒、review、归档。
+### `lifementor/who-you-are.md`
+
+至少放：
+
+- 用户是谁
+- 用户目前处在什么阶段
+- 用户稳定的偏好
+- 用户稳定的限制条件
+
+### `lifementor/who-you-want-to-be.md`
+
+至少放：
+
+- 用户想成为什么样的人
+- 用户向往怎样的生活
+- 用户想用什么方式处理事情和做决定
+
+### `~/.lifementor/matters/<category>/<matter-slug>/meta.md`
+
+至少放：
+
+- 事项名称
+- 一句话说明这件事是什么
+- 这件事为什么重要
+- 当前状态
+- 可用于匹配的关键词或别名
+
+### `~/.lifementor/matters/<category>/<matter-slug>/facts.md`
+
+至少放：
+
+- 历史事实记录
+
+当前结论：
+
+- 第一阶段只做 `what-you-are`、`who-you-want-to-be`、`matter-manager`
+- 先把这套最小结构跑通，再讨论后面的提醒、review、归档
