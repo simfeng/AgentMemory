@@ -1,6 +1,6 @@
 ---
 name: matter-manager
-description: Use when a user message may belong to a tracked matter or should create a new one. Trigger for meaningful messages about a project, plan, preparation, application, problem, relationship, habit, decision, progress update, blocker, delay, risk, recurring concern, or a correction to an existing matter's name or category. This skill identifies the right matter, asks a short clarifying question if the match is ambiguous, and keeps that matter's record current.
+description: Default skill for most meaningful non-greeting user messages that mention, imply, update, correct, or refer back to a continuing thing that may need tracking across turns. Trigger when the user talks about a project, plan, preparation, application, problem, relationship, habit, decision, progress update, blocker, delay, risk, recurring concern, or an existing matter's name or category. Use it whenever the message may belong to an existing matter or should create a new one. It decides the right matter, asks a short clarifying question if the match is ambiguous, and updates that matter's record.
 ---
 
 # Matter Manager
@@ -25,21 +25,6 @@ Script paths here are relative to this skill folder.
 - `scripts/append-matter-fact.py`
 
 All six scripts use only Python standard library modules.
-
-## Matter Layout
-
-Matters are stored under:
-
-```text
-~/.lifementor/matters/
-  <category>/
-    <matter-slug>/
-      meta.md
-      facts.md
-```
-
-- `meta.md` is the lightweight identification layer
-- `facts.md` is the append-only fact history layer
 
 ## Naming Rules
 
@@ -212,20 +197,11 @@ Output: JSON with `facts_path` and appended line count.
 2. Run `scripts/read-matter-meta.py` only for likely candidates.
 3. Run `scripts/read-matter-facts.py` only when recent detail is needed to disambiguate a likely match.
 4. If the matter is still ambiguous, ask the user one short clarifying question and stop.
-5. Decide one result: `match_existing_matter`, `rename_existing_matter`, `create_new_matter`, `ask_user_to_clarify_matter`, or `no_matter_signal`.
-6. If the matter is new or its meta needs correction, use `scripts/upsert-matter-meta.py`.
-7. If category or slug should change, use `scripts/move-matter.py`, then run `scripts/upsert-matter-meta.py`.
-8. Append new fact lines only with `scripts/append-matter-fact.py`.
-
-## Rules
-
-- Match progressively: folder name, then `meta.md`, then `facts.md`.
-- Read only the needed part of `facts.md`.
-- `scripts/read-matter-facts.py` defaults to the last 100 lines.
-- Specific fact ranges are by file line number, 1-based and inclusive.
-- `facts.md` must only be appended to.
-- Do not use generic file read tools on `meta.md` or `facts.md`.
-- Do not use generic file edit tools on `meta.md` or `facts.md`.
+5. If an existing matter clearly matches, continue with that matter.
+6. If the current category or slug is no longer accurate, use `scripts/move-matter.py`, then run `scripts/upsert-matter-meta.py`.
+7. If no existing matter fits but the message should become a tracked matter, create it with `scripts/upsert-matter-meta.py`.
+8. If the matter's meta needs correction, use `scripts/upsert-matter-meta.py`.
+9. If this round contains useful new progress, append fact lines with `scripts/append-matter-fact.py`.
 
 ## Clarifying Question
 

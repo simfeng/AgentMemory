@@ -82,14 +82,6 @@
 - 更新 `meta.md`
 - 追加新的事实进展到 `facts.md`
 
-输出结果：
-
-- `match_existing_matter`
-- `rename_existing_matter`
-- `create_new_matter`
-- `ask_user_to_clarify_matter`
-- `no_matter_signal`
-
 规则：
 
 - 只允许通过 `skills/matter-manager/scripts/` 下的脚本操作事项文件
