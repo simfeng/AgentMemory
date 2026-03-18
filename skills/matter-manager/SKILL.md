@@ -20,11 +20,13 @@ Script paths here are relative to this skill folder.
 - `scripts/scan-matters.py`
 - `scripts/read-matter-meta.py`
 - `scripts/read-matter-history.py`
+- `scripts/read-matter-strategy.py`
 - `scripts/upsert-matter-meta.py`
 - `scripts/move-matter.py`
 - `scripts/append-matter-history.py`
+- `scripts/write-matter-strategy.py`
 
-All six scripts use only Python standard library modules.
+All eight scripts use only Python standard library modules.
 
 ## Naming Rules
 
@@ -124,7 +126,23 @@ Rules:
 
 Output: plain text lines from recent matter progress.
 
-### 4. Create or update matter meta
+### 4. Read current strategy
+
+Use this after the matter match is clear when you need to know whether the user already has a preferred high-level way to handle this matter.
+
+```bash
+scripts/read-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug>
+```
+
+Rules:
+
+- if `strategy.md` is missing or empty, treat that as no strategy
+- only use the strategy when the file has content
+- treat the file as high-level guidance, not a detailed execution plan
+
+Output: plain text current strategy.
+
+### 5. Create or update matter meta
 
 Use this when creating a matter or correcting its meta.
 
@@ -144,9 +162,9 @@ If this is a new matter and its progress history still needs initialization:
 scripts/upsert-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug> --title "<title>" --history-started-at "YYYY-MM-DD HH:MM"
 ```
 
-Output: JSON with matter path, title, aliases, and whether progress history was initialized.
+Output: JSON with matter path, title, aliases, and whether history or strategy files were initialized.
 
-### 5. Move matter
+### 6. Move matter
 
 Use this whenever the matter category or matter name should change.
 
@@ -167,7 +185,7 @@ scripts/move-matter.py ~/.lifementor/matters/<old-category>/<old-matter-slug> ~/
 
 Output: JSON with old path, new path, and whether a move happened.
 
-### 6. Append progress lines
+### 7. Append progress lines
 
 Use this only after the matter path is final.
 
@@ -191,6 +209,39 @@ Rules:
 
 Output: JSON with matter path and appended line count.
 
+### 8. Write current strategy
+
+Use this only when the user clearly says how they want to handle this matter at a high level.
+
+Write one short strategy:
+
+```bash
+scripts/write-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug> --text "First understand the situation, then decide whether to continue."
+```
+
+Write multiple lines:
+
+```bash
+scripts/write-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug> --text "Treat this as a long-term matter." --text "Focus on steady progress instead of rushing."
+```
+
+Clear the current strategy:
+
+```bash
+scripts/write-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug> --clear
+```
+
+Rules:
+
+- write only the current preferred high-level handling strategy
+- overwrite the file instead of keeping old versions
+- do not write detailed next steps, reminder settings, or execution-level instructions
+- do not write vague mood updates or normal progress as strategy
+- do not ask the user just to fill `strategy.md`
+- only write when the user clearly expresses how this matter should be handled
+
+Output: JSON with matter path, strategy path, and whether the file now has content.
+
 ## Workflow
 
 1. Run `scripts/scan-matters.py` first to read existing categories and matter folder names.
@@ -198,10 +249,12 @@ Output: JSON with matter path and appended line count.
 3. Run `scripts/read-matter-history.py` only when recent detail is needed to disambiguate a likely match.
 4. If the matter is still ambiguous, ask the user one short clarifying question and stop.
 5. If an existing matter clearly matches, continue with that matter.
-6. If the current category or slug is no longer accurate, use `scripts/move-matter.py`, then run `scripts/upsert-matter-meta.py`.
-7. If no existing matter fits but the message should become a tracked matter, create it with `scripts/upsert-matter-meta.py`.
-8. If the matter's meta needs correction, use `scripts/upsert-matter-meta.py`.
-9. If this round contains useful new progress, append progress lines with `scripts/append-matter-history.py`.
+6. Read `strategy.md` with `scripts/read-matter-strategy.py` when you need to know the current preferred handling style for that matter.
+7. If the current category or slug is no longer accurate, use `scripts/move-matter.py`, then run `scripts/upsert-matter-meta.py`.
+8. If no existing matter fits but the message should become a tracked matter, create it with `scripts/upsert-matter-meta.py`.
+9. If the matter's meta needs correction, use `scripts/upsert-matter-meta.py`.
+10. If the user clearly states how this matter should be handled, overwrite `strategy.md` with `scripts/write-matter-strategy.py`.
+11. If this round contains useful new progress, append progress lines with `scripts/append-matter-history.py`.
 
 ## Clarifying Question
 

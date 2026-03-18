@@ -72,6 +72,7 @@
 
 - `~/.lifementor/matters/<category>/<matter-slug>/meta.md`
 - `~/.lifementor/matters/<category>/<matter-slug>/history.md`
+- `~/.lifementor/matters/<category>/<matter-slug>/strategy.md`
 
 负责处理：
 
@@ -80,16 +81,22 @@
 - 判断事项分类和名称是否需要修正
 - 当归属不明确时先向用户反问一句
 - 更新 `meta.md`
+- 在用户明确表达时更新 `strategy.md`
 - 追加新的事实进展到 `history.md`
 
 规则：
 
 - 只允许通过 `skills/matter-manager/scripts/` 下的脚本操作事项文件
 - 先看事项目录名，再看 `meta.md`，最后在需要时看 `history.md`
+- `strategy.md` 只记录当前用户希望从宏观上怎么处理这件事
+- `strategy.md` 有内容就按它处理；没有内容就按正常流程处理
+- `strategy.md` 不写具体步骤、提醒频率或执行细节
+- 不主动为了补全策略而追问；只有归属不明确时才反问
 - `history.md` 默认只读取最后 100 行
 - 需要时可以按文件行号范围读取，例如 `1-100`、`101-200`、`201-300`
 - 行号从 `1` 开始，且包含起止行
 - `history.md` 只允许追加，不重写
+- `strategy.md` 只保留当前版本，不记录历史版本
 - 所有脚本只使用 Python 标准库
 
 脚本：
@@ -97,9 +104,11 @@
 - `scan-matters.py`：扫描已有分类和事项目录
 - `read-matter-meta.py`：读取候选事项的 `meta.md`
 - `read-matter-history.py`：按尾部或按行范围读取 `history.md`
-- `upsert-matter-meta.py`：创建或更新 `meta.md`，并确保 `history.md` 存在
+- `read-matter-strategy.py`：读取 `strategy.md`
+- `upsert-matter-meta.py`：创建或更新 `meta.md`，并确保 `history.md` 和 `strategy.md` 存在
 - `move-matter.py`：移动事项目录，完成改分类或改名称
 - `append-matter-history.py`：只向 `history.md` 追加事实行
+- `write-matter-strategy.py`：覆盖写入当前 `strategy.md`
 
 ## 二、目录和文件设计
 
@@ -114,6 +123,7 @@ lifementor/
       <matter-slug>/
         meta.md
         history.md
+        strategy.md
 ```
 
 ### `lifementor/who-you-are.md`
@@ -148,6 +158,12 @@ lifementor/
 至少放：
 
 - 历史事实记录
+
+### `~/.lifementor/matters/<category>/<matter-slug>/strategy.md`
+
+至少放：
+
+- 当前用户希望从宏观上怎么处理这件事
 
 当前结论：
 

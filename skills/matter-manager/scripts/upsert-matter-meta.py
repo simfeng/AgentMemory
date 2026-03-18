@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create or update matter meta and initialize progress history if missing.
+Create or update matter meta and initialize missing matter support files.
 
 Examples:
   upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title "HRC Price Forecast" --summary "Track the forecast scope." --why "Important for decision making." --status "active"
@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 
 HISTORY_FILENAME = "history.md"
+STRATEGY_FILENAME = "strategy.md"
 
 SECTION_KEYS = {
     "Summary": "summary",
@@ -25,7 +26,7 @@ SECTION_KEYS = {
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Create or update matter meta and ensure matter history exists.",
+        description="Create or update matter meta and ensure matter history and strategy files exist.",
         epilog=(
             "Examples:\n"
             "  upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title \"HRC Price Forecast\" --summary \"Track the forecast scope.\" --why \"Important for decision making.\" --status \"active\"\n"
@@ -149,11 +150,20 @@ def ensure_history_file(history_path: Path, created_at: str | None, created_text
     return True
 
 
+def ensure_strategy_file(strategy_path: Path) -> bool:
+    if strategy_path.exists():
+        return False
+
+    strategy_path.write_text("", encoding="utf-8")
+    return True
+
+
 def main() -> int:
     args = parse_args()
     matter_dir = Path(args.matter_dir).expanduser()
     meta_path = matter_dir / "meta.md"
     history_path = matter_dir / HISTORY_FILENAME
+    strategy_path = matter_dir / STRATEGY_FILENAME
     matter_dir.mkdir(parents=True, exist_ok=True)
 
     existing = parse_existing_meta(meta_path)
@@ -175,10 +185,12 @@ def main() -> int:
     meta_text = build_meta_text(title, summary, why_it_matters, current_status, aliases)
     meta_path.write_text(meta_text, encoding="utf-8")
     created_history = ensure_history_file(history_path, args.history_started_at, args.history_started_text)
+    created_strategy = ensure_strategy_file(strategy_path)
 
     payload = {
         "matter_dir": str(matter_dir),
         "history_initialized": created_history,
+        "strategy_initialized": created_strategy,
         "title": title,
         "aliases": aliases,
     }
