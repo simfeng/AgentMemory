@@ -3,8 +3,8 @@
 Create or update matter meta and initialize missing matter support files.
 
 Examples:
-  upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title "HRC Price Forecast" --summary "Track the forecast scope." --why "Important for decision making." --status "active"
-  upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title "HRC Price Forecast" --alias "steel-price-forecast"
+  upsert-matter-meta.py ~/.memory/matters/work/hrc-price-forecast --title "HRC Price Forecast" --summary "Track the forecast scope." --why "Important for decision making." --status "active"
+  upsert-matter-meta.py ~/.memory/matters/work/hrc-price-forecast --title "HRC Price Forecast" --alias "steel-price-forecast"
 """
 
 from __future__ import annotations
@@ -29,8 +29,8 @@ def parse_args() -> argparse.Namespace:
         description="Create or update matter meta and ensure matter history and strategy files exist.",
         epilog=(
             "Examples:\n"
-            "  upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title \"HRC Price Forecast\" --summary \"Track the forecast scope.\" --why \"Important for decision making.\" --status \"active\"\n"
-            "  upsert-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast --title \"HRC Price Forecast\" --alias \"steel-price-forecast\""
+            "  upsert-matter-meta.py ~/.memory/matters/work/hrc-price-forecast --title \"HRC Price Forecast\" --summary \"Track the forecast scope.\" --why \"Important for decision making.\" --status \"active\"\n"
+            "  upsert-matter-meta.py ~/.memory/matters/work/hrc-price-forecast --title \"HRC Price Forecast\" --alias \"steel-price-forecast\""
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )

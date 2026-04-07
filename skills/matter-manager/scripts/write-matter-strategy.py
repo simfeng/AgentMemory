@@ -3,9 +3,9 @@
 Write or clear the current high-level handling strategy for a matter.
 
 Examples:
-  write-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast --text "First understand the situation, then decide."
-  printf "Treat this as a long-term matter.\nFocus on steady progress.\n" | write-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast
-  write-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast --clear
+  write-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast --text "First understand the situation, then decide."
+  printf "Treat this as a long-term matter.\nFocus on steady progress.\n" | write-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast
+  write-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast --clear
 """
 
 from __future__ import annotations
@@ -23,9 +23,9 @@ def parse_args() -> argparse.Namespace:
         description="Overwrite the current high-level strategy.md content for a matter.",
         epilog=(
             "Examples:\n"
-            "  write-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast --text \"First understand the situation, then decide.\"\n"
-            "  printf \"Treat this as a long-term matter.\\nFocus on steady progress.\\n\" | write-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast\n"
-            "  write-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast --clear"
+            "  write-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast --text \"First understand the situation, then decide.\"\n"
+            "  printf \"Treat this as a long-term matter.\\nFocus on steady progress.\\n\" | write-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast\n"
+            "  write-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast --clear"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )

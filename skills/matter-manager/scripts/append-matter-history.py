@@ -3,8 +3,8 @@
 Append new progress lines for a matter without reading the current history.
 
 Examples:
-  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:30: user confirmed the forecast scope"
-  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line "- 2026-03-16 10:35: user uploaded a new data file"
+  append-matter-history.py ~/.memory/matters/work/hrc-price-forecast --line "- 2026-03-16 10:30: user confirmed the forecast scope"
+  append-matter-history.py ~/.memory/matters/work/hrc-price-forecast --line "- 2026-03-16 10:35: user uploaded a new data file"
 """
 
 from __future__ import annotations
@@ -22,8 +22,8 @@ def parse_args() -> argparse.Namespace:
         description="Append new progress lines to a matter. This script never reads the current history.",
         epilog=(
             "Examples:\n"
-            "  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:30: user confirmed scope\"\n"
-            "  append-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:35: user sent new data\""
+            "  append-matter-history.py ~/.memory/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:30: user confirmed scope\"\n"
+            "  append-matter-history.py ~/.memory/matters/work/hrc-price-forecast --line \"- 2026-03-16 10:35: user sent new data\""
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )

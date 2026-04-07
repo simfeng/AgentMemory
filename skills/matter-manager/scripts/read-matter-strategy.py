@@ -3,8 +3,8 @@
 Read the current high-level handling strategy for a matter.
 
 Examples:
-  read-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast
-  read-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast/strategy.md
+  read-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast
+  read-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast/strategy.md
 """
 
 from __future__ import annotations
@@ -21,8 +21,8 @@ def parse_args() -> argparse.Namespace:
         description="Read the current high-level strategy.md content for a matter.",
         epilog=(
             "Examples:\n"
-            "  read-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast\n"
-            "  read-matter-strategy.py ~/.lifementor/matters/work/hrc-price-forecast/strategy.md"
+            "  read-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast\n"
+            "  read-matter-strategy.py ~/.memory/matters/work/hrc-price-forecast/strategy.md"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )

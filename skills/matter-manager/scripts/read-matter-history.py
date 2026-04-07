@@ -3,9 +3,9 @@
 Read recent progress lines for a matter.
 
 Examples:
-  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast
-  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100
-  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200
+  read-matter-history.py ~/.memory/matters/work/hrc-price-forecast
+  read-matter-history.py ~/.memory/matters/work/hrc-price-forecast --start 1 --end 100
+  read-matter-history.py ~/.memory/matters/work/hrc-price-forecast --start 101 --end 200
 """
 
 from __future__ import annotations
@@ -23,9 +23,9 @@ def parse_args() -> argparse.Namespace:
         description="Read only a line window from a matter's recent progress history. Defaults to the last 100 lines.",
         epilog=(
             "Examples:\n"
-            "  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast\n"
-            "  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 1 --end 100\n"
-            "  read-matter-history.py ~/.lifementor/matters/work/hrc-price-forecast --start 101 --end 200"
+            "  read-matter-history.py ~/.memory/matters/work/hrc-price-forecast\n"
+            "  read-matter-history.py ~/.memory/matters/work/hrc-price-forecast --start 1 --end 100\n"
+            "  read-matter-history.py ~/.memory/matters/work/hrc-price-forecast --start 101 --end 200"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )

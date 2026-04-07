@@ -3,8 +3,8 @@
 Read one or more matter meta files.
 
 Examples:
-  read-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast
-  read-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast ~/.lifementor/matters/product/agent-positioning
+  read-matter-meta.py ~/.memory/matters/work/hrc-price-forecast
+  read-matter-meta.py ~/.memory/matters/work/hrc-price-forecast ~/.memory/matters/product/agent-positioning
 """
 
 from __future__ import annotations
@@ -27,8 +27,8 @@ def parse_args() -> argparse.Namespace:
         description="Read one or more matter meta files and return structured JSON.",
         epilog=(
             "Examples:\n"
-            "  read-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast\n"
-            "  read-matter-meta.py ~/.lifementor/matters/work/hrc-price-forecast ~/.lifementor/matters/product/agent-positioning"
+            "  read-matter-meta.py ~/.memory/matters/work/hrc-price-forecast\n"
+            "  read-matter-meta.py ~/.memory/matters/work/hrc-price-forecast ~/.memory/matters/product/agent-positioning"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )

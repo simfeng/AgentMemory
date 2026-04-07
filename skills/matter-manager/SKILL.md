@@ -7,7 +7,7 @@ description: Default skill for most meaningful non-greeting user messages that m
 
 Use this skill when the user is talking about a project, plan, problem, relationship, preparation, progress update, blocker, or any other ongoing thing that may need continued tracking.
 
-Only use this skill's `scripts/` directory for `~/.lifementor/matters/`.
+Only use this skill's `scripts/` directory for `~/.memory/matters/`.
 
 Do not read the script implementations before using them.
 
@@ -81,25 +81,25 @@ scripts/scan-matters.py
 Optional root path:
 
 ```bash
-scripts/scan-matters.py ~/.lifementor/matters
+scripts/scan-matters.py ~/.memory/matters
 ```
 
 Output: JSON with category, slug, and matter path.
 
-Default root path: `~/.lifementor/matters`
+Default root path: `~/.memory/matters`
 
 ### 2. Read candidate meta
 
 Use this for likely matched matters only.
 
 ```bash
-scripts/read-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug>
+scripts/read-matter-meta.py ~/.memory/matters/<category>/<matter-slug>
 ```
 
 Read multiple candidates in one call:
 
 ```bash
-scripts/read-matter-meta.py ~/.lifementor/matters/<category-a>/<matter-slug-a> ~/.lifementor/matters/<category-b>/<matter-slug-b>
+scripts/read-matter-meta.py ~/.memory/matters/<category-a>/<matter-slug-a> ~/.memory/matters/<category-b>/<matter-slug-b>
 ```
 
 Output: JSON with title, summary, why-it-matters, current status, and aliases.
@@ -109,13 +109,13 @@ Output: JSON with title, summary, why-it-matters, current status, and aliases.
 Default recent window:
 
 ```bash
-scripts/read-matter-history.py ~/.lifementor/matters/<category>/<matter-slug>
+scripts/read-matter-history.py ~/.memory/matters/<category>/<matter-slug>
 ```
 
 Specific line range:
 
 ```bash
-scripts/read-matter-history.py ~/.lifementor/matters/<category>/<matter-slug> --start 1 --end 100
+scripts/read-matter-history.py ~/.memory/matters/<category>/<matter-slug> --start 1 --end 100
 ```
 
 Rules:
@@ -131,7 +131,7 @@ Output: plain text lines from recent matter progress.
 Use this after the matter match is clear when you need to know whether the user already has a preferred high-level way to handle this matter.
 
 ```bash
-scripts/read-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug>
+scripts/read-matter-strategy.py ~/.memory/matters/<category>/<matter-slug>
 ```
 
 Rules:
@@ -147,19 +147,19 @@ Output: plain text current strategy.
 Use this when creating a matter or correcting its meta.
 
 ```bash
-scripts/upsert-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug> --title "<title>" --summary "<summary>" --why "<why-it-matters>" --status "<status>"
+scripts/upsert-matter-meta.py ~/.memory/matters/<category>/<matter-slug> --title "<title>" --summary "<summary>" --why "<why-it-matters>" --status "<status>"
 ```
 
 Add aliases when needed:
 
 ```bash
-scripts/upsert-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug> --title "<title>" --alias "<alias-a>" --alias "<alias-b>"
+scripts/upsert-matter-meta.py ~/.memory/matters/<category>/<matter-slug> --title "<title>" --alias "<alias-a>" --alias "<alias-b>"
 ```
 
 If this is a new matter and its progress history still needs initialization:
 
 ```bash
-scripts/upsert-matter-meta.py ~/.lifementor/matters/<category>/<matter-slug> --title "<title>" --history-started-at "YYYY-MM-DD HH:MM"
+scripts/upsert-matter-meta.py ~/.memory/matters/<category>/<matter-slug> --title "<title>" --history-started-at "YYYY-MM-DD HH:MM"
 ```
 
 Output: JSON with matter path, title, aliases, and whether history or strategy files were initialized.
@@ -180,7 +180,7 @@ When any of these happen, call this script.
 Do not use any other agent tool to rename or move the matter.
 
 ```bash
-scripts/move-matter.py ~/.lifementor/matters/<old-category>/<old-matter-slug> ~/.lifementor/matters/<new-category>/<new-matter-slug>
+scripts/move-matter.py ~/.memory/matters/<old-category>/<old-matter-slug> ~/.memory/matters/<new-category>/<new-matter-slug>
 ```
 
 Output: JSON with old path, new path, and whether a move happened.
@@ -192,13 +192,13 @@ Use this only after the matter path is final.
 Append one fact:
 
 ```bash
-scripts/append-matter-history.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..."
+scripts/append-matter-history.py ~/.memory/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..."
 ```
 
 Append multiple facts:
 
 ```bash
-scripts/append-matter-history.py ~/.lifementor/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..." --line "- YYYY-MM-DD HH:MM: ..."
+scripts/append-matter-history.py ~/.memory/matters/<category>/<matter-slug> --line "- YYYY-MM-DD HH:MM: ..." --line "- YYYY-MM-DD HH:MM: ..."
 ```
 
 Rules:
@@ -216,19 +216,19 @@ Use this only when the user clearly says how they want to handle this matter at 
 Write one short strategy:
 
 ```bash
-scripts/write-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug> --text "First understand the situation, then decide whether to continue."
+scripts/write-matter-strategy.py ~/.memory/matters/<category>/<matter-slug> --text "First understand the situation, then decide whether to continue."
 ```
 
 Write multiple lines:
 
 ```bash
-scripts/write-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug> --text "Treat this as a long-term matter." --text "Focus on steady progress instead of rushing."
+scripts/write-matter-strategy.py ~/.memory/matters/<category>/<matter-slug> --text "Treat this as a long-term matter." --text "Focus on steady progress instead of rushing."
 ```
 
 Clear the current strategy:
 
 ```bash
-scripts/write-matter-strategy.py ~/.lifementor/matters/<category>/<matter-slug> --clear
+scripts/write-matter-strategy.py ~/.memory/matters/<category>/<matter-slug> --clear
 ```
 
 Rules:

@@ -4,7 +4,7 @@ Scan existing matter categories and matter folders.
 
 Examples:
   scan-matters.py
-  scan-matters.py ~/.lifementor/matters
+  scan-matters.py ~/.memory/matters
 """
 
 from __future__ import annotations
@@ -13,16 +13,16 @@ import argparse
 import json
 from pathlib import Path
 
-DEFAULT_MATTERS_ROOT = Path.home() / ".lifementor" / "matters"
+DEFAULT_MATTERS_ROOT = Path.home() / ".memory" / "matters"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Scan lifementor matters by category and slug.",
+        description="Scan memory matters by category and slug.",
         epilog=(
             "Examples:\n"
             "  scan-matters.py\n"
-            "  scan-matters.py ~/.lifementor/matters"
+            "  scan-matters.py ~/.memory/matters"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )

@@ -3,8 +3,8 @@
 Move a matter directory to a new category or slug.
 
 Examples:
-  move-matter.py ~/.lifementor/matters/work/steel-price-forecast ~/.lifementor/matters/work/hrc-price-forecast
-  move-matter.py ~/.lifementor/matters/work/hrc-price-forecast ~/.lifementor/matters/research/hrc-price-forecast
+  move-matter.py ~/.memory/matters/work/steel-price-forecast ~/.memory/matters/work/hrc-price-forecast
+  move-matter.py ~/.memory/matters/work/hrc-price-forecast ~/.memory/matters/research/hrc-price-forecast
 """
 
 from __future__ import annotations
@@ -20,8 +20,8 @@ def parse_args() -> argparse.Namespace:
         description="Move a matter directory to a new category or slug.",
         epilog=(
             "Examples:\n"
-            "  move-matter.py ~/.lifementor/matters/work/steel-price-forecast ~/.lifementor/matters/work/hrc-price-forecast\n"
-            "  move-matter.py ~/.lifementor/matters/work/hrc-price-forecast ~/.lifementor/matters/research/hrc-price-forecast"
+            "  move-matter.py ~/.memory/matters/work/steel-price-forecast ~/.memory/matters/work/hrc-price-forecast\n"
+            "  move-matter.py ~/.memory/matters/work/hrc-price-forecast ~/.memory/matters/research/hrc-price-forecast"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
